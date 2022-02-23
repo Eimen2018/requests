@@ -405,9 +405,13 @@ class Requests {
 
     var response = await future.timeout(Duration(seconds: timeoutSeconds));
 
+    //reverted back to old way, the cast to StreamedResponse breaks delete message requests
+    // if (response is http.StreamedResponse) {
+    //   response = await (http.Response.fromStream(response)
+    //       as FutureOr<http.StreamedResponse>);
+    // }
     if (response is http.StreamedResponse) {
-      response = await (http.Response.fromStream(response)
-          as FutureOr<http.StreamedResponse>);
+      response = await http.Response.fromStream(response);
     }
 
     return await _handleHttpResponse(hostname, response, persistCookies);
